@@ -1,0 +1,15 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: #140A1E; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+input, textarea, button, select { -webkit-appearance: none; appearance: none; font-family: inherit; }
+input:focus, textarea:focus, select:focus { outline: none; }
+
+.fade-in { animation: fadeIn .35s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.option-btn { transition: transform .12s ease, border-color .12s ease, background .12s ease; }
+.option-btn:hover { border-color: rgba(255,110,199,.55) !important; background: rgba(255,110,199,.1) !important; }
+.option-btn:active { transform: scale(.98); }
+
+@keyframes sparkle { 0%,100% { opacity:.4; transform: scale(.9); } 50% { opacity:1; transform: scale(1.15); } }
+.sparkle { animation: sparkle 1.8s ease-in-out infinite; }

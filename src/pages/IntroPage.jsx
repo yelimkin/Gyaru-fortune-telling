@@ -11,7 +11,7 @@ const DAYS   = Array.from({ length: 31 }, (_, i) => i + 1)
 const HERO_VIDEO = 'intro-hero.mp4'
 const HERO_IMGS  = ['intro-hero.gif', 'intro-hero.png']
 
-const TOTAL = 5 // 이름 · 생년월일 · 태어난시간 · 성별 · 동의
+const TOTAL = 7 // 이름 · 생년월일 · 태어난시간 · 성별 · 직업 · 애인유무 · 동의
 
 const fieldSt = {
   width: '100%', padding: '15px 16px', fontSize: 16, fontFamily: FONT,
@@ -28,7 +28,8 @@ const labelSt = { display: 'block', fontSize: 12, color: 'rgba(255,255,255,.7)',
 export default function IntroPage() {
   const navigate = useNavigate()
   const [user, setUser] = useState({
-    name: '', year: '', month: '', day: '', timeEl: '', timeLabel: '', gender: '', agreed: false,
+    name: '', year: '', month: '', day: '', timeEl: '', timeLabel: '', gender: '',
+    job: '', partner: '', agreed: false,
   })
   // 갸루 영상 배경: 'video' → 이미지(gif/png) → 'none'(그라데이션) 순으로 폴백
   const [heroKind, setHeroKind] = useState('video')
@@ -46,7 +47,9 @@ export default function IntroPage() {
     2: yearOk && user.month && user.day,
     3: true, // 태어난 시간은 선택
     4: user.gender !== '',
-    5: user.agreed,
+    5: user.job.trim().length > 0,
+    6: user.partner !== '',
+    7: user.agreed,
   }
 
   const goNext = () => setStep(s => Math.min(TOTAL, s + 1))
@@ -233,8 +236,45 @@ export default function IntroPage() {
                 </>
               )}
 
-              {/* Step 5: 개인정보 동의 */}
+              {/* Step 5: 직업 */}
               {step === 5 && (
+                <>
+                  <h2 style={{ fontSize: 23, fontWeight: 800, color: '#fff', lineHeight: 1.4, marginBottom: 8 }}>무슨 일을<br/>하고 있어?</h2>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,.65)', marginBottom: 28, lineHeight: 1.7 }}>직업도 사주 풀이에 참고할게~</p>
+                  <label style={labelSt}>직업</label>
+                  <input style={fieldSt} placeholder="예) 대학생, 직장인, 취준생" autoFocus value={user.job}
+                    onChange={e => setUser({ ...user, job: e.target.value })}
+                    onKeyDown={e => { if (e.key === 'Enter' && canNext[5]) goNext() }} />
+                  <button style={ctaBtn(canNext[5])} disabled={!canNext[5]} onClick={() => canNext[5] && goNext()}>다음</button>
+                </>
+              )}
+
+              {/* Step 6: 애인 유무 (선택 시 자동으로 다음) */}
+              {step === 6 && (
+                <>
+                  <h2 style={{ fontSize: 23, fontWeight: 800, color: '#fff', lineHeight: 1.4, marginBottom: 8 }}>지금 애인<br/>있어, 없어?</h2>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,.65)', marginBottom: 28, lineHeight: 1.7 }}>연애운 풀이에 참고할게~ 💕</p>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    {[{ val: '있음', emoji: '💕', label: '있어요' }, { val: '없음', emoji: '🦋', label: '없어요' }].map(({ val, emoji, label }) => {
+                      const on = user.partner === val
+                      return (
+                        <button key={val} onClick={() => { setUser({ ...user, partner: val }); setStep(7) }}
+                          style={{ flex: 1, padding: '28px 0', borderRadius: 16, border: '1.5px solid',
+                            borderColor: on ? BRAND.pink : 'rgba(255,255,255,.2)',
+                            background: on ? 'rgba(255,110,199,.25)' : 'rgba(0,0,0,.28)',
+                            color: on ? '#fff' : 'rgba(255,255,255,.85)',
+                            fontFamily: FONT, fontSize: 17, fontWeight: 700, cursor: 'pointer' }}>
+                          <div style={{ fontSize: 34, marginBottom: 8 }}>{emoji}</div>
+                          {label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </>
+              )}
+
+              {/* Step 7: 개인정보 동의 */}
+              {step === 7 && (
                 <>
                   <h2 style={{ fontSize: 23, fontWeight: 800, color: '#fff', lineHeight: 1.4, marginBottom: 8 }}>마지막!<br/>개인정보 동의만 해줘</h2>
                   <p style={{ fontSize: 14, color: 'rgba(255,255,255,.65)', marginBottom: 24, lineHeight: 1.7 }}>동의하면 바로 사주 결과가 떠🔮</p>
@@ -257,7 +297,7 @@ export default function IntroPage() {
                       </div>
                     </div>
                   </div>
-                  <button style={ctaBtn(canNext[5])} disabled={!canNext[5]} onClick={() => canNext[5] && finish()}>
+                  <button style={ctaBtn(canNext[7])} disabled={!canNext[7]} onClick={() => canNext[7] && finish()}>
                     내 갸루 사주 보기 🔮
                   </button>
                 </>
